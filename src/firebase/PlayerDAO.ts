@@ -1,20 +1,20 @@
 import {Firebase} from "./Firebase";
-import {User} from "../types/Types";
+import {Player} from "../types/Types";
 
-export class UserDao {
+export class PlayerDAO {
 
     static userRef = Firebase.firebaseApp.database().ref("/users")
 
-    static writeUserData(user: User) {
-        UserDao.runWhenUserNotExists(user, () => {
-            UserDao.userRef.push({
+    static writeUserData(user: Player) {
+        PlayerDAO.runWhenUserNotExists(user, () => {
+            PlayerDAO.userRef.push({
                 username: user
             });
         })
     }
 
-    static runWhenUserNotExists(user: User, callback:() => void) {
-        return UserDao.userRef.on("value", (snapshot: any) => {
+    static runWhenUserNotExists(user: Player, callback:() => void) {
+        return PlayerDAO.userRef.on("value", (snapshot: any) => {
             if (!this.useExistsInDataset(snapshot, user)) {
                 callback()
             }
@@ -23,7 +23,7 @@ export class UserDao {
         }))
     }
 
-    private static useExistsInDataset(snapshot: any, user: User) {
+    private static useExistsInDataset(snapshot: any, user: Player) {
         let userExists = false;
         snapshot.forEach((child: any) => {
             if (child.val().username.name === user.name) {
