@@ -5,6 +5,8 @@ import { exampleGame, Player, Game, exampleGameJoined, Team } from './types/Type
 import { FC, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import GamePage from './GamePage';
+import { PlayerDAO } from './firebase/PlayerDAO';
+import { GameDAO } from './firebase/GameDAO';
 
 const theme = {
   global: {
@@ -15,6 +17,8 @@ const theme = {
     },
   },
 };
+
+export type JoinType = (position: 'first' | 'second') => Promise<void>;
 
 const register = async (name: string): Promise<Player> => {
   return { name: 'Kacper' }
@@ -29,13 +33,13 @@ const joinTeam = async (team: Team): Promise<Game> => {
 }
 
 const App: FC = () => {
-  const [player, setPlayer] = useState();
-  const [game, setGame] = useState();
+  const [player, setPlayer] = useState<Player>();
+  const [game, setGame] = useState<Game>();
 
   const login = async (name: string) => {
-    const loggedPlayer: Player = await register(name);
+    const loggedPlayer: Player = await PlayerDAO.register(name);
     if (loggedPlayer) {
-      const fetchedGame: Game = await getLobby();
+      const fetchedGame: Game = await GameDAO.getLobby();
       if (fetchedGame) {
         setGame(fetchedGame);
         setPlayer(loggedPlayer);
@@ -43,59 +47,63 @@ const App: FC = () => {
     }
   }
 
-  const join = async (player: Player, team: Team) => {
-    const newGameState = await joinTeam(team);
-    if (newGameState) {
-      setGame(newGameState);
+  const joinFirstTeam = async (position: 'first' | 'second'): Promise<void> => {
+    let firstTeam = game?.teamOne;
+    if(position == 'first') {
+      firstTeam = {
+        ...firstTeam,
+        playerOne: player
+      };
+    } else {
+      firstTeam = {
+        ...firstTeam,
+        playerTwo: player
+      };
+    }
+
+    const newLobby = await GameDAO.setFirstTeam(firstTeam);
+    if(newLobby) {
+      setGame(newLobby);
     }
   }
 
-    useEffect(() => {
+  const joinSecondTeam = async (position: 'first' | 'second'): Promise<void> => {
+    let secondTeam = game?.teamTwo;
+    if(position == 'first') {
+      secondTeam = {
+        ...secondTeam,
+        playerOne: player
+      };
+    } else {
+      secondTeam = {
+        ...secondTeam,
+        playerTwo: player
+      };
+    }
 
-        let lobby = GameDAO.getLobby().then((game) => {
-            console.log(game)
-        });
+    const newLobby = await GameDAO.setSecondTeam(secondTeam);
+    if(newLobby) {
+      setGame(newLobby);
+    }
+  }
 
-
-        GameDAO.setFirstTeam({
-            playerOne:{
-                name: "DUPA",
-                isReady: false
-            },
-            playerTwo:{
-                isReady:false,
-                name: "UDAP2"
-            },
-            teamName: "aaa"
-        })
-
-
-        PlayerDAO.register("nieaadasaaa").then((player) => {
-            console.log("player")
-            console.log(player)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [])
-
-
-    const [isAuth, setIsAuth] = useState(true);
-    
-    return (
-        <Grommet theme={theme}>
-            <Box
-                direction="row-responsive"
-                justify="center"
-                align="center"
-                pad="medium"
-                gap="medium"
-            >
-                <Router>
+  return (
+    <Grommet theme={theme}>
+      <Box
+        direction="row-responsive"
+        justify="center"
+        align="center"
+        pad="medium"
+        gap="medium"
+      >
+        <Router>
           <Switch>
             <Route exact path="/">
-              {(player && game) ? 
-              (<GamePage game={game} joinTeam={join} />) 
-              :(<LoginPage register={login} />)}
+              
+              {(player && game) ?
+                (<GamePage game={game} joinFirstTeam={joinFirstTeam} joinSecondTeam={joinSecondTeam} />)
+                : (<LoginPage register={login} />)}
+
             </Route>
           </Switch>
         </Router>

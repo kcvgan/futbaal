@@ -4,7 +4,7 @@ export type Player = {
 }
 
 export type Team = {
-    teamName: string,
+    teamName?: string,
     playerOne?: Player
     playerTwo?: Player
 }
