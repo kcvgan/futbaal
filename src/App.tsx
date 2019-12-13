@@ -2,6 +2,16 @@ import React from 'react';
 import LoginPage from './LoginPage';
 import { Grommet, Box } from 'grommet';
 
+const theme = {
+  global: {
+    font: {
+      family: 'Roboto',
+      size: '18px',
+      height: '20px',
+    },
+  },
+};
+
 const App: React.FC = () => {
   return (
     <Grommet theme={theme}>
@@ -17,14 +27,5 @@ const App: React.FC = () => {
     </Grommet>
   );
 }
-const theme = {
-  global: {
-    font: {
-      family: 'Roboto',
-      size: '18px',
-      height: '20px',
-    },
-  },
-};
 
 export default App;
