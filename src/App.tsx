@@ -4,6 +4,10 @@ import {Grommet, Box} from 'grommet';
 import {PlayerDAO} from "./firebase/PlayerDAO";
 import {GameDAO} from "./firebase/GameDAO";
 import {exampleGame} from "./types/Types";
+import { FC, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import LoginPage from './LoginPage';
+import GamePage from './GamePage';
 
 const theme = {
     global: {
@@ -15,7 +19,7 @@ const theme = {
     },
 };
 
-const App: React.FC = () => {
+const App: FC = () => {
 
     useEffect(() => {
         let gameRef = GameDAO.createNewGame(exampleGame);
@@ -27,7 +31,7 @@ const App: React.FC = () => {
         })
     }, [])
 
-    return (
+    const [isAuth, setIsAuth] = useState(true);return (
         <Grommet theme={theme}>
             <Box
                 direction="row-responsive"
@@ -36,8 +40,17 @@ const App: React.FC = () => {
                 pad="medium"
                 gap="medium"
             >
-                <LoginPage/>
-            </Box>
+                <Router>
+          <Switch>
+            <Route exact path="/">
+              <LoginPage/>
+            </Route>
+            {isAuth && <Route path="/game">
+              <GamePage />
+            </Route>}
+          </Switch>
+        </Router>
+      </Box>
         </Grommet>
     );
 }
