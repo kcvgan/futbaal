@@ -9,7 +9,6 @@ export class GameDAO {
         return {...game, id: ref.key}
     }
 
-
     static setGameActive(gameKey: string) {
         this.gameRef.child(gameKey).update({
             inProgress: true

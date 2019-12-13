@@ -1,34 +1,36 @@
 import React from 'react';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { Text, Box, Heading } from 'grommet';
-import { Game, Player } from './types/Types';
+import { Game, Player, Team } from './types/Types';
 
 const GREEN = 'neutral-1';
 const RED = 'status-error';
 
-const GamePage: FC<{game: Game}> = ({game}) => {
+const GamePage: FC<{ game: Game, joinTeam: (player: Player, team: Team) => Promise<void> }> = ({ game, joinTeam }) => {
 
     return (<Box justify="center" align="center" pad="small" gap="medium" width={{ min: '500px', max: '500px' }}>
         <Text size="xlarge">Obecna rozgrywka:</Text>
         <Box direction="column" width={{ min: '100%', max: '500px' }} height={'500px'}>
-
-            <Box direction="row">
-                <PlayerBox player={game.teamOne.playerOne} teamColor={GREEN}/>
-                <PlayerBox player={game.teamOne.playerTwo} teamColor={GREEN}/>
-            </Box>
+            <TeamBox team={game.teamOne} teamColor={GREEN} joinTeam={joinTeam} />
 
             <Box><Heading alignSelf="center">VS</Heading></Box>
 
-            <Box direction="row">
-                <PlayerBox player={game.teamTwo.playerOne} teamColor={RED} />
-                <PlayerBox player={game.teamTwo.playerTwo} teamColor={RED}/>
-            </Box>
-
+            <TeamBox team={game.teamTwo} teamColor={RED} joinTeam={joinTeam} />
         </Box>
     </Box>)
 };
 
-const PlayerBox: FC<{ player?: Player, teamColor?: string, joinTeam?: () => void }> = ({ player, teamColor, joinTeam }) => {
+const TeamBox: FC<{ team?: Team, teamColor: string, joinTeam: (player: Player, team: Team) => Promise<void> }> = ({ team, teamColor, joinTeam }) => {
+
+    return (
+        <Box direction="row">
+            <PlayerBox player={team?.playerOne} teamColor={teamColor} />
+            <PlayerBox player={team?.playerTwo} teamColor={teamColor} />
+        </Box>
+    )
+}
+
+const PlayerBox: FC<{ player?: Player, teamColor?: string, joinTeam?: any }> = ({ player, teamColor, joinTeam }) => {
 
     return (<Box
         onClick={joinTeam}
