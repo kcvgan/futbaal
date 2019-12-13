@@ -3,7 +3,7 @@ import LoginPage from './LoginPage';
 import { Grommet, Box } from 'grommet';
 import { exampleGame, Player, Game, exampleGameJoined, Team } from './types/Types';
 import { FC, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, withRouter, RouteComponentProps } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import GamePage from './GamePage';
 
 const theme = {
@@ -50,16 +50,47 @@ const App: FC = () => {
     }
   }
 
-  return (
-    <Grommet theme={theme}>
-      <Box
-        direction="row-responsive"
-        justify="center"
-        align="center"
-        pad="medium"
-        gap="medium"
-      >
-        <Router>
+    useEffect(() => {
+
+        let lobby = GameDAO.getLobby().then((game) => {
+            console.log(game)
+        });
+
+
+        GameDAO.setFirstTeam({
+            playerOne:{
+                name: "DUPA",
+                isReady: false
+            },
+            playerTwo:{
+                isReady:false,
+                name: "UDAP2"
+            },
+            teamName: "aaa"
+        })
+
+
+        PlayerDAO.register("nieaadasaaa").then((player) => {
+            console.log("player")
+            console.log(player)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [])
+
+
+    const [isAuth, setIsAuth] = useState(true);
+    
+    return (
+        <Grommet theme={theme}>
+            <Box
+                direction="row-responsive"
+                justify="center"
+                align="center"
+                pad="medium"
+                gap="medium"
+            >
+                <Router>
           <Switch>
             <Route exact path="/">
               {(player && game) ? 
