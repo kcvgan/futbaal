@@ -7,9 +7,7 @@ export class PlayerDAO {
 
     static writeUserData(user: Player) {
         PlayerDAO.runWhenUserNotExists(user, () => {
-            PlayerDAO.userRef.push({
-                username: user
-            });
+            PlayerDAO.userRef.push(user);
         })
     }
 
@@ -26,7 +24,7 @@ export class PlayerDAO {
     private static useExistsInDataset(snapshot: any, user: Player) {
         let userExists = false;
         snapshot.forEach((child: any) => {
-            if (child.val().username.name === user.name) {
+            if (child.val().name === user.name) {
                 userExists = true;
             }
         });
