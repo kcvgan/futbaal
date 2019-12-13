@@ -6,7 +6,6 @@ import {GameDAO} from "./firebase/GameDAO";
 import {exampleGame} from "./types/Types";
 import { FC, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import LoginPage from './LoginPage';
 import GamePage from './GamePage';
 
 const theme = {
@@ -22,14 +21,33 @@ const theme = {
 const App: FC = () => {
 
     useEffect(() => {
-        let gameRef = GameDAO.createNewGame(exampleGame);
-        console.log(gameRef)
-        GameDAO.setGameActive(gameRef.id!!)
-        GameDAO.setFirstPlayer(gameRef, {
-            name: "DUPA",
-            isReady: false
+
+        let lobby = GameDAO.getLobby().then((game) => {
+            console.log(game)
+        });
+
+
+        GameDAO.setFirstTeam({
+            playerOne:{
+                name: "DUPA",
+                isReady: false
+            },
+            playerTwo:{
+                isReady:false,
+                name: "UDAP2"
+            },
+            teamName: "aaa"
+        })
+
+
+        PlayerDAO.register("nieaadasaaa").then((player) => {
+            console.log("player")
+            console.log(player)
+        }).catch((error) => {
+            console.log(error)
         })
     }, [])
+
 
     const [isAuth, setIsAuth] = useState(true);return (
         <Grommet theme={theme}>

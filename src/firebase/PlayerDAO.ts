@@ -5,30 +5,25 @@ export class PlayerDAO {
 
     static userRef = Firebase.firebaseApp.database().ref("/users")
 
-    static writeUserData(user: Player) {
-        PlayerDAO.runWhenUserNotExists(user, () => {
-            PlayerDAO.userRef.push(user);
+    static async register(name: string): Promise<Player> {
+        const data = await this.userRef.push({
+            name: name,
+            isReady: false
         })
+        const snapshot = await data.once('value');
+        return snapshot.val()
     }
 
-    static runWhenUserNotExists(user: Player, callback:() => void) {
-        return PlayerDAO.userRef.on("value", (snapshot: any) => {
-            if (!this.useExistsInDataset(snapshot, user)) {
-                callback()
-            }
-        }, ((error: any) => {
-            console.error(error)
-        }))
-    }
 
-    private static useExistsInDataset(snapshot: any, user: Player) {
+    private static existsInDataset(snapshot: any, name:string) {
         let userExists = false;
         snapshot.forEach((child: any) => {
-            if (child.val().name === user.name) {
+            if (child.val().username === name) {
                 userExists = true;
             }
         });
         return userExists;
     }
+
 }
 
