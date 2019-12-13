@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import LoginPage from './LoginPage';
+import { Grommet, Box } from 'grommet';
+import {PlayerDAO} from "./firebase/PlayerDAO";
 import { FC, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import { Grommet, Box } from 'grommet';
 import GamePage from './GamePage';
 
 const theme = {
@@ -16,6 +18,11 @@ const theme = {
 };
 
 const App: FC = () => {
+
+  useEffect(() => {
+    PlayerDAO.writeUserData({name: "mirek", isReady: true})
+  },[])
+
   const [isAuth, setIsAuth] = useState(true);
 
   return (
