@@ -16,17 +16,15 @@ const LoginPage: FC<{register: (name: string) => Promise<void>}> = ({register}) 
             align={"center"}
             width={{ min: '300px', max: '400px' }}
             margin={{ top: '100px' }}>
-            <TextInput 
-                placeholder='Wpisz swoje imię' 
+            <TextInput
+                placeholder='Wpisz swoje imię'
                 value={name}
                 onChange={e => setName(e.target.value)}/>
-            <Link to={'game'}>
                 <Button
                     onClick={() => register(name)}
                     primary
                     label={'Zacznij'}
                     margin={{ top: '10px' }} />
-            </Link>
         </Box>)
 };
 
