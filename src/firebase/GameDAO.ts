@@ -21,14 +21,16 @@ export class GameDAO {
     }
 
     static setFirstTeam(team: Team): Promise<Game> {
-        return this.gameRef.update({
+        this.gameRef.update({
             teamOne: team
         })
+        return this.getLobby()
     }
 
     static setSecondTeam(team: Team): Promise<Game> {
-        return this.gameRef.update({
+        this.gameRef.update({
             teamOne: team
         })
+        return this.getLobby()
     }
 }
