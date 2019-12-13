@@ -34,7 +34,10 @@ const TeamBox: FC<{ team?: Team, teamColor: string, joinTeam: JoinType }> = ({ t
 const PlayerBox: FC<{ player?: Player, teamColor?: string, joinTeam?: () => void }> = ({ player, teamColor, joinTeam }) => {
 
     return (<Box
-        onClick={joinTeam}
+        onClick={() => {
+            if(!player && joinTeam) {
+                joinTeam();
+        }}}
         round
         height={'150px'}
         pad="medium"

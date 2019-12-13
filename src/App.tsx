@@ -1,9 +1,8 @@
 import React from 'react';
 import LoginPage from './LoginPage';
 import { Grommet, Box } from 'grommet';
-import { exampleGame, Player, Game, exampleGameJoined, Team } from './types/Types';
+import { Player, Game } from './types/Types';
 import { FC, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import GamePage from './GamePage';
 import { PlayerDAO } from './firebase/PlayerDAO';
 import { GameDAO } from './firebase/GameDAO';
@@ -19,18 +18,6 @@ const theme = {
 };
 
 export type JoinType = (position: 'first' | 'second') => Promise<void>;
-
-const register = async (name: string): Promise<Player> => {
-  return { name: 'Kacper' }
-}
-
-const getLobby = async (): Promise<Game> => {
-  return exampleGame;
-}
-
-const joinTeam = async (team: Team): Promise<Game> => {
-  return exampleGameJoined;
-}
 
 const App: FC = () => {
   const [player, setPlayer] = useState<Player>();
@@ -49,7 +36,7 @@ const App: FC = () => {
 
   const joinFirstTeam = async (position: 'first' | 'second'): Promise<void> => {
     let firstTeam = game?.teamOne;
-    if(position == 'first') {
+    if (position == 'first') {
       firstTeam = {
         ...firstTeam,
         playerOne: player
@@ -62,14 +49,15 @@ const App: FC = () => {
     }
 
     const newLobby = await GameDAO.setFirstTeam(firstTeam);
-    if(newLobby) {
+    console.log(newLobby);
+    if (newLobby) {
       setGame(newLobby);
     }
   }
 
   const joinSecondTeam = async (position: 'first' | 'second'): Promise<void> => {
     let secondTeam = game?.teamTwo;
-    if(position == 'first') {
+    if (position == 'first') {
       secondTeam = {
         ...secondTeam,
         playerOne: player
@@ -82,7 +70,7 @@ const App: FC = () => {
     }
 
     const newLobby = await GameDAO.setSecondTeam(secondTeam);
-    if(newLobby) {
+    if (newLobby) {
       setGame(newLobby);
     }
   }
@@ -96,17 +84,9 @@ const App: FC = () => {
         pad="medium"
         gap="medium"
       >
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              
-              {(player && game) ?
-                (<GamePage game={game} joinFirstTeam={joinFirstTeam} joinSecondTeam={joinSecondTeam} />)
-                : (<LoginPage register={login} />)}
-
-            </Route>
-          </Switch>
-        </Router>
+        {(player && game) ?
+          (<GamePage game={game} joinFirstTeam={joinFirstTeam} joinSecondTeam={joinSecondTeam} />)
+          : (<LoginPage register={login} />)}
       </Box>
     </Grommet>
   );
