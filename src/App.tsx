@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import LoginPage from './LoginPage';
 import { Grommet, Box } from 'grommet';
 import { exampleGame, Player, Game, exampleGameJoined, Team } from './types/Types';
@@ -62,13 +62,9 @@ const App: FC = () => {
         <Router>
           <Switch>
             <Route exact path="/">
-              {(player && game) ? (
-                <GamePage game={game} joinTeam={join} />
-              ) :
-                (<Route exact path="/">
-                  <LoginPage register={login} />
-                </Route>)
-              }
+              {(player && game) ? 
+              (<GamePage game={game} joinTeam={join} />) 
+              :(<LoginPage register={login} />)}
             </Route>
           </Switch>
         </Router>
