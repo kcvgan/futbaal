@@ -1,33 +1,27 @@
 import React from 'react';
 import { FC, useState } from 'react';
 import { Text, Box, Heading } from 'grommet';
-
-type Player = {
-    name: string;
-    isReady?: boolean;
-}
+import { Game, Player } from './types/Types';
 
 const GREEN = 'neutral-1';
 const RED = 'status-error';
 
-const GamePage: FC = () => {
-    const [currentPlayers, setCurrentPlayers] = useState([]);
-
+const GamePage: FC<{game: Game}> = ({game}) => {
 
     return (<Box justify="center" align="center" pad="small" gap="medium" width={{ min: '500px', max: '500px' }}>
         <Text size="xlarge">Obecna rozgrywka:</Text>
         <Box direction="column" width={{ min: '100%', max: '500px' }} height={'500px'}>
 
             <Box direction="row">
-                <PlayerBox player={currentPlayers[0]} teamColor={GREEN}/>
-                <PlayerBox player={currentPlayers[1]} teamColor={GREEN}/>
+                <PlayerBox player={game.teamOne.playerOne} teamColor={GREEN}/>
+                <PlayerBox player={game.teamOne.playerTwo} teamColor={GREEN}/>
             </Box>
 
             <Box><Heading alignSelf="center">VS</Heading></Box>
 
             <Box direction="row">
-                <PlayerBox teamColor={RED} />
-                <PlayerBox player={currentPlayers[3]} teamColor={RED}/>
+                <PlayerBox player={game.teamTwo.playerOne} teamColor={RED} />
+                <PlayerBox player={game.teamTwo.playerTwo} teamColor={RED}/>
             </Box>
 
         </Box>

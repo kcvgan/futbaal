@@ -4,8 +4,10 @@ import { Grommet, Box } from 'grommet';
 import {PlayerDAO} from "./firebase/PlayerDAO";
 import { FC, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import LoginPage from './LoginPage';
 import GamePage from './GamePage';
+import { Firebase } from './firebase/Firebase';
+
+Firebase.signIn();
 
 const theme = {
   global: {
@@ -40,7 +42,7 @@ const App: FC = () => {
               <LoginPage />
             </Route>
             {isAuth && <Route path="/game">
-              <GamePage />
+              <GamePage  />
             </Route>}
           </Switch>
         </Router>
