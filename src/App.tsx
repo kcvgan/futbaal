@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import LoginPage from './LoginPage';
 import { Grommet, Box } from 'grommet';
+import {UserDao} from "./firebase/UserDao";
 
 const theme = {
   global: {
@@ -13,6 +14,11 @@ const theme = {
 };
 
 const App: React.FC = () => {
+
+  useEffect(() => {
+    UserDao.writeUserData({name: "mirek"})
+  },[])
+
   return (
     <Grommet theme={theme}>
        <Box
