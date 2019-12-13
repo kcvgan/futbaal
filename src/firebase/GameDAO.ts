@@ -8,6 +8,7 @@ export class GameDAO {
         const ref = this.gameRef.set(exampleGame);
     }
 
+
     static async getLobby(): Promise<Game> {
         const snapshot = await this.gameRef.once('value');
         return snapshot.val();
