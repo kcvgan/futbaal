@@ -9,7 +9,7 @@ const RED = 'status-error';
 
 const GamePage: FC<{ game: Game, joinFirstTeam: JoinType, joinSecondTeam: JoinType }> = ({ game, joinFirstTeam, joinSecondTeam }) => {
 
-    return (<Box justify="center" align="center" pad="small" gap="medium" width={{ min: '500px', max: '500px' }}>
+    return (<Box justify="center" align="center" pad="small" gap="medium" width={{ max: '500px' }}>
         <Text size="xlarge">Obecna rozgrywka:</Text>
         <Box direction="column" width={{ min: '100%', max: '500px' }} height={'500px'}>
             <TeamBox team={game.teamOne} teamColor={GREEN} joinTeam={joinFirstTeam} />
@@ -35,7 +35,7 @@ const PlayerBox: FC<{ player?: Player, teamColor?: string, joinTeam?: () => void
 
     return (<Box
         onClick={() => {
-            if(!player && joinTeam) {
+            if(player && joinTeam) {
                 joinTeam();
         }}}
         round
