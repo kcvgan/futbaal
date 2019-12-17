@@ -1,74 +1,47 @@
 export type Player = {
-    name: string,
-    isReady?: boolean
-}
+    name: string;
+    isReady?: boolean;
+};
 
 export type Team = {
-    teamName?: string,
-    playerOne?: Player
-    playerTwo?: Player
-}
+    teamName?: string;
+    playerOne?: Player;
+    playerTwo?: Player;
+};
 
 export type Game = {
-    id?: string
-    inProgress: boolean,
-    dateTime: number,
-    teamOne?: Team,
-    teamTwo?: Team,
-}
+    id?: string;
+    inProgress: boolean;
+    dateTime: number;
+    teamOne?: Team;
+    teamTwo?: Team;
+};
 
 export const exampleGame: Game = {
     inProgress: false,
     dateTime: Date.now(),
     teamOne: {
-        teamName: "janusze",
+        teamName: 'janusze',
         playerOne: {
             isReady: false,
-            name: "januszA"
+            name: 'januszA'
         },
         playerTwo: {
             isReady: false,
-            name: "januszB"
+            name: 'januszB'
         }
     },
     teamTwo: {
-        teamName: "grazyny",
+        teamName: 'grazyny',
         playerOne: {
             isReady: false,
-            name: "gazA"
+            name: 'gazA'
         },
         playerTwo: {
             isReady: false,
-            name: "gazB",
+            name: 'gazB'
         }
     }
+};
 
-}
-
-export const exampleGameJoined: Game = {
-    inProgress: false,
-    dateTime: Date.now(),
-    teamOne: {
-        teamName: "janusze",
-        playerOne: {
-            isReady: false,
-            name: "Kacper"
-        },
-        playerTwo: {
-            isReady: false,
-            name: "januszB"
-        }
-    },
-    teamTwo: {
-        teamName: "grazyny",
-        playerOne: {
-            isReady: false,
-            name: "gazA"
-        },
-        playerTwo: {
-            isReady: false,
-            name: "gazB",
-        }
-    }
-
-}
+export const USERNAME_KEY = 'futbaal-username';
