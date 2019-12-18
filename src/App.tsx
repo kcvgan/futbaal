@@ -139,7 +139,7 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
   return (
     <Grommet theme={theme}>
       <Box
-        direction="row-responsive"
+        direction="row"
         justify="center"
         align="center"
         pad="medium"

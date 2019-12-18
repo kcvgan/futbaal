@@ -37,7 +37,7 @@ const GamePage: FC<{
             align="center"
             pad="small"
             gap="medium"
-            width={{ min: '450px' }}
+            width={'large'}
         >
             {game ? (
                 <>
@@ -65,7 +65,8 @@ const GamePage: FC<{
                             joinTeam={joinSecondTeam}
                         />
                     </Box>
-                    <Button 
+                    <Button
+                        margin={{bottom: '10px'}} 
                         disabled={isPlayerInTeam}
                         label="Gotowy" 
                         onClick={() => setPlayerReady()}/>
