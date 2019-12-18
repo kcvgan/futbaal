@@ -4,6 +4,7 @@ import { Text, Box, Heading, Button, CheckBox } from 'grommet';
 import { InProgress, Checkbox, CheckboxSelected } from 'grommet-icons';
 import { Game, Player, Team } from './types/Types';
 import { JoinType, isPlayerInTeam as checkIfInTeam } from './App';
+import { GameDAO } from './firebase/GameDAO';
 
 const GREEN = 'neutral-1';
 const RED = 'status-error';
@@ -68,6 +69,12 @@ const GamePage: FC<{
                         disabled={isPlayerInTeam}
                         label="Gotowy" 
                         onClick={() => setPlayerReady()}/>
+                    {!!(game?.teamOne?.playerOne?.isReady
+            && game?.teamOne?.playerTwo?.isReady
+            && game?.teamTwo?.playerOne?.isReady
+            && game?.teamTwo?.playerTwo?.isReady) && <Button 
+                        label="Zakończ obecną rozgrywkę" 
+                        onClick={() => GameDAO.resetLobby()}/>}
                 </>
             ) : (
                 <Box pad="xlarge" align="center" gap="large">
@@ -137,7 +144,7 @@ const PlayerBox: FC<{
                 <Text margin="auto" size="large">
                     {currentPlayer ? '(Ty)' : ''}
                 </Text>
-                {player?.isReady ? <CheckboxSelected color={GREEN} size="medium" /> : <Checkbox color={RED} size="medium"/>}
+                {player?.isReady ? <CheckboxSelected color={GREEN} size="medium" /> : ''}
                 </>
             )}
         </Box>

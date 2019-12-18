@@ -35,4 +35,19 @@ export class GameDAO {
         })
         return this.getLobby();
     }
+
+    static resetLobby() {
+        this.gameRef.update({ inProgress: false,
+            dateTime: Date.now(),
+            teamOne: {
+                teamName: 'janusze',
+                playerOne: null,
+                playerTwo: null
+            },
+            teamTwo: {
+                teamName: 'grazyny',
+                playerOne: null,
+                playerTwo: null
+            }})
+    }
 }
