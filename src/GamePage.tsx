@@ -1,9 +1,9 @@
 import React from 'react';
 import { FC, useState, useEffect } from 'react';
-import { Text, Box, Heading, Button } from 'grommet';
-import { InProgress } from 'grommet-icons';
+import { Text, Box, Heading, Button, CheckBox } from 'grommet';
+import { InProgress, Checkbox, CheckboxSelected } from 'grommet-icons';
 import { Game, Player, Team } from './types/Types';
-import { JoinType } from './App';
+import { JoinType, isPlayerInTeam as checkIfInTeam } from './App';
 
 const GREEN = 'neutral-1';
 const RED = 'status-error';
@@ -22,14 +22,11 @@ const GamePage: FC<{
     setPlayerReady
 }) => {
 
-    const [isPlayerInTeam, setIsPlayerInTeam] = useState(false);
+    const [isPlayerInTeam, setIsPlayerInTeam] = useState(true);
 
     useEffect(() => {
-        if(game?.teamOne?.playerOne?.name === player?.name
-            || game?.teamOne?.playerTwo?.name === player?.name
-            || game?.teamTwo?.playerOne?.name === player?.name
-            || game?.teamTwo?.playerTwo?.name === player?.name) {
-                setIsPlayerInTeam(true);
+        if(checkIfInTeam(game, player)) {
+                setIsPlayerInTeam(false);
             }
     }, [game])
 
@@ -39,7 +36,7 @@ const GamePage: FC<{
             align="center"
             pad="small"
             gap="medium"
-            width={{ max: '500px' }}
+            width={{ min: '450px' }}
         >
             {game ? (
                 <>
@@ -88,7 +85,7 @@ const TeamBox: FC<{
     teamColor: string;
     joinTeam: JoinType;
 }> = ({ player, team, teamColor, joinTeam }) => {
-    const isCurrentPlayer = (currentPlayer: Player, player?: Player) =>
+    const isCurrentPlayer = (currentPlayer: Player, player?: Player | null) =>
         player?.name === currentPlayer.name;
 
     return (
@@ -111,14 +108,14 @@ const TeamBox: FC<{
 
 const PlayerBox: FC<{
     currentPlayer: boolean;
-    player?: Player;
+    player?: Player | null;
     teamColor?: string;
     joinTeam?: () => void;
 }> = ({ currentPlayer = false, player, teamColor, joinTeam }) => {
     return (
         <Box
             onClick={() => {
-            if(currentPlayer && player && joinTeam) {
+            if(joinTeam) {
                 joinTeam();
             }}}
             round
@@ -127,7 +124,6 @@ const PlayerBox: FC<{
             margin={'15px'}
             width={'100%'}
             align="center"
-            background={{color: player?.isReady ? GREEN : 'none'}}
             border={{
                 color: player ? teamColor : 'status-unknown',
                 size: '2px',
@@ -140,7 +136,9 @@ const PlayerBox: FC<{
                 </Text>
                 <Text margin="auto" size="large">
                     {currentPlayer ? '(Ty)' : ''}
-                </Text></>
+                </Text>
+                {player?.isReady ? <CheckboxSelected color={GREEN} size="medium" /> : <Checkbox color={RED} size="medium"/>}
+                </>
             )}
         </Box>
     );

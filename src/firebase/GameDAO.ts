@@ -28,4 +28,11 @@ export class GameDAO {
         })
         return this.getLobby()
     }
+
+    static updateGame(game?: Game): Promise<Game> {
+        this.gameRef.update({
+            ...game
+        })
+        return this.getLobby();
+    }
 }

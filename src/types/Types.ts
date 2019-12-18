@@ -5,8 +5,8 @@ export type Player = {
 
 export type Team = {
     teamName?: string;
-    playerOne?: Player;
-    playerTwo?: Player;
+    playerOne?: Player | null;
+    playerTwo?: Player | null;
 };
 
 export type Game = {

@@ -17,6 +17,13 @@ const theme = {
   }
 };
 
+export function isPlayerInTeam(game?: Game, player?: Player) {
+  return game?.teamOne?.playerOne?.name === player?.name
+    || game?.teamOne?.playerTwo?.name === player?.name
+    || game?.teamTwo?.playerOne?.name === player?.name
+    || game?.teamTwo?.playerTwo?.name === player?.name
+}
+
 export type JoinType = (position: 'first' | 'second') => Promise<void>;
 
 const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
@@ -49,7 +56,17 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
   };
 
   const setPlayerReady = () => {
-    
+    let newGame = game;
+    if (newGame?.teamOne?.playerOne?.name === player?.name && newGame?.teamOne?.playerOne) {
+      newGame.teamOne.playerOne.isReady = !newGame.teamOne.playerOne.isReady;
+    } else if (newGame?.teamOne?.playerTwo?.name === player?.name && newGame?.teamOne?.playerTwo) {
+      newGame.teamOne.playerTwo.isReady = !newGame.teamOne.playerTwo.isReady;
+    } else if (newGame?.teamTwo?.playerOne?.name === player?.name && newGame?.teamTwo?.playerOne) {
+      newGame.teamTwo.playerOne.isReady = !newGame.teamTwo.playerOne.isReady;
+    } else if (newGame?.teamTwo?.playerTwo?.name === player?.name && newGame?.teamTwo?.playerTwo) {
+      newGame.teamTwo.playerTwo.isReady = !newGame.teamTwo.playerTwo.isReady;
+    }
+    GameDAO.updateGame(newGame);
   }
 
   const joinFirstTeam = async (
@@ -57,7 +74,7 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
   ): Promise<void> => {
     let firstTeam = game?.teamOne;
     if (position === 'first') {
-      if (!firstTeam?.playerOne) {
+      if (!firstTeam?.playerOne && !isPlayerInTeam(game, player)) {
         firstTeam = {
           ...firstTeam,
           playerOne: player
@@ -65,11 +82,11 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
       } else if (firstTeam?.playerOne?.name === player?.name) {
         firstTeam = {
           ...firstTeam,
-          playerOne: undefined
+          playerOne: null
         };
       }
     } else {
-      if (!firstTeam?.playerTwo) {
+      if (!firstTeam?.playerTwo && !isPlayerInTeam(game, player)) {
         firstTeam = {
           ...firstTeam,
           playerTwo: player
@@ -77,7 +94,7 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
       } else if (firstTeam?.playerTwo?.name === player?.name) {
         firstTeam = {
           ...firstTeam,
-          playerTwo: undefined
+          playerTwo: null
         };
       }
     }
@@ -88,9 +105,10 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
   const joinSecondTeam = async (
     position: 'first' | 'second'
   ): Promise<void> => {
+
     let secondTeam = game?.teamTwo;
     if (position === 'first') {
-      if (!secondTeam?.playerOne) {
+      if (!secondTeam?.playerOne && !isPlayerInTeam(game, player)) {
         secondTeam = {
           ...secondTeam,
           playerOne: player
@@ -98,11 +116,11 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
       } else if (secondTeam?.playerOne?.name === player?.name) {
         secondTeam = {
           ...secondTeam,
-          playerOne: undefined
+          playerOne: null
         };
       }
     } else {
-      if (!secondTeam?.playerTwo) {
+      if (!secondTeam?.playerTwo && !isPlayerInTeam(game, player)) {
         secondTeam = {
           ...secondTeam,
           playerTwo: player
@@ -110,7 +128,7 @@ const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
       } else if (secondTeam?.playerTwo?.name === player?.name) {
         secondTeam = {
           ...secondTeam,
-          playerTwo: undefined
+          playerTwo: null
         };
       }
     }
