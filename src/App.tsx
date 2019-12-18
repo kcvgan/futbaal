@@ -8,153 +8,139 @@ import { PlayerDAO } from './firebase/PlayerDAO';
 import { GameDAO } from './firebase/GameDAO';
 
 const theme = {
-    global: {
-        font: {
-            family: 'Roboto',
-            size: '18px',
-            height: '20px'
-        }
+  global: {
+    font: {
+      family: 'Roboto',
+      size: '18px',
+      height: '20px'
     }
+  }
 };
 
 export type JoinType = (position: 'first' | 'second') => Promise<void>;
 
 const App: FC<{ playerFromStore?: Player }> = ({ playerFromStore }) => {
-    const [player, setPlayer] = useState<Player | undefined>(playerFromStore);
-    const [game, setGame] = useState<Game>();
+  const [player, setPlayer] = useState<Player | undefined>(playerFromStore);
+  const [game, setGame] = useState<Game>();
 
-    const registerGameListener = () => {
-        GameDAO.gameRef.on('value', function(snapshot: any) {
-            console.log(snapshot.val());
-            setGame(snapshot.val());
-        });
+  const registerGameListener = () => {
+    GameDAO.gameRef.on('value', function (snapshot: any) {
+      console.log(snapshot.val());
+      setGame(snapshot.val());
+    });
+  };
+
+  useEffect(() => {
+    registerGameListener();
+    return () => {
+      GameDAO.gameRef.off();
     };
+  }, []);
 
-    useEffect(() => {
-        registerGameListener();
-        return () => {
-            GameDAO.gameRef.off();
+  const login = async (name: string) => {
+    const loggedPlayer: Player = await PlayerDAO.register(name);
+    if (loggedPlayer) {
+      setPlayer(loggedPlayer);
+      window.localStorage.setItem(
+        USERNAME_KEY,
+        JSON.stringify(loggedPlayer)
+      );
+    }
+  };
+
+  const setPlayerReady = () => {
+    
+  }
+
+  const joinFirstTeam = async (
+    position: 'first' | 'second'
+  ): Promise<void> => {
+    let firstTeam = game?.teamOne;
+    if (position === 'first') {
+      if (!firstTeam?.playerOne) {
+        firstTeam = {
+          ...firstTeam,
+          playerOne: player
+        }
+      } else if (firstTeam?.playerOne?.name === player?.name) {
+        firstTeam = {
+          ...firstTeam,
+          playerOne: undefined
         };
-    }, []);
+      }
+    } else {
+      if (!firstTeam?.playerTwo) {
+        firstTeam = {
+          ...firstTeam,
+          playerTwo: player
+        };
+      } else if (firstTeam?.playerTwo?.name === player?.name) {
+        firstTeam = {
+          ...firstTeam,
+          playerTwo: undefined
+        };
+      }
+    }
 
-    const login = async (name: string) => {
-        const loggedPlayer: Player = await PlayerDAO.register(name);
-        if (loggedPlayer) {
-            setPlayer(loggedPlayer);
-            window.localStorage.setItem(
-                USERNAME_KEY,
-                JSON.stringify(loggedPlayer)
-            );
+    GameDAO.setFirstTeam(firstTeam);
+  };
+
+  const joinSecondTeam = async (
+    position: 'first' | 'second'
+  ): Promise<void> => {
+    let secondTeam = game?.teamTwo;
+    if (position === 'first') {
+      if (!secondTeam?.playerOne) {
+        secondTeam = {
+          ...secondTeam,
+          playerOne: player
         }
-    };
+      } else if (secondTeam?.playerOne?.name === player?.name) {
+        secondTeam = {
+          ...secondTeam,
+          playerOne: undefined
+        };
+      }
+    } else {
+      if (!secondTeam?.playerTwo) {
+        secondTeam = {
+          ...secondTeam,
+          playerTwo: player
+        };
+      } else if (secondTeam?.playerTwo?.name === player?.name) {
+        secondTeam = {
+          ...secondTeam,
+          playerTwo: undefined
+        };
+      }
+    }
 
-    const joinFirstTeam = async (
-        position: 'first' | 'second'
-    ): Promise<void> => {
-        let firstTeam = game?.teamOne;
-        if (position === 'first') {
-            firstTeam = {
-                ...firstTeam,
-                playerOne: player
-            };
-        } else {
-            firstTeam = {
-                ...firstTeam,
-                playerTwo: player
-            };
-        }
+    GameDAO.setSecondTeam(secondTeam);
+  };
 
-        const newLobby = await GameDAO.setFirstTeam(firstTeam);
-        console.log(newLobby);
-        if (newLobby) {
-            setGame(newLobby);
-        }
-    };
-
-    const joinSecondTeam = async (
-        position: 'first' | 'second'
-    ): Promise<void> => {
-        let secondTeam = game?.teamTwo;
-        if (position === 'first') {
-            secondTeam = {
-                ...secondTeam,
-                playerOne: player
-            };
-        } else {
-            secondTeam = {
-                ...secondTeam,
-                playerTwo: player
-            };
-        }
-
-        const newLobby = await GameDAO.setSecondTeam(secondTeam);
-        if (newLobby) {
-            setGame(newLobby);
-        }
-    };
-
-    const leaveSecondTeam = async (
-        position: 'first' | 'second'
-    ): Promise<void> => {
-        let secondTeam = game?.teamTwo;
-        if (position === 'first') {
-            secondTeam = {
-                ...secondTeam,
-                playerOne: undefined
-            };
-        } else {
-            secondTeam = {
-                ...secondTeam,
-                playerTwo: undefined
-            };
-        }
-
-        GameDAO.setSecondTeam(secondTeam);
-    };
-
-    const leaveFirstTeam = async (
-        position: 'first' | 'second'
-    ): Promise<void> => {
-        let firstTeam = game?.teamOne;
-        if (position === 'first') {
-            firstTeam = {
-                ...firstTeam,
-                playerOne: undefined
-            };
-        } else {
-            firstTeam = {
-                ...firstTeam,
-                playerTwo: undefined
-            };
-        }
-
-        GameDAO.setFirstTeam(firstTeam);
-    };
-
-    return (
-        <Grommet theme={theme}>
-            <Box
-                direction="row-responsive"
-                justify="center"
-                align="center"
-                pad="medium"
-                gap="medium"
-            >
-                {player ? (
-                    <GamePage
-                        player={player}
-                        game={game}
-                        joinFirstTeam={joinFirstTeam}
-                        joinSecondTeam={joinSecondTeam}
-                        // leaveFirstTeam={leaveFirstTeam}
-                        // leaveSecondTeam={leaveSecondTeam}
-                    />
-                ) : (
-                    <LoginPage register={login} />
-                )}
-            </Box>
-        </Grommet>
-    );
+  return (
+    <Grommet theme={theme}>
+      <Box
+        direction="row-responsive"
+        justify="center"
+        align="center"
+        pad="medium"
+        gap="medium"
+      >
+        {player ? (
+          <GamePage
+            player={player}
+            game={game}
+            joinFirstTeam={joinFirstTeam}
+            joinSecondTeam={joinSecondTeam}
+            setPlayerReady={setPlayerReady}
+          />
+        ) : (
+            <LoginPage register={login} />
+          )}
+      </Box>
+    </Grommet>
+  );
 };
 
 export default App;

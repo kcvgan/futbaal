@@ -1,5 +1,5 @@
 import React from 'react';
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Text, Box, Heading, Button } from 'grommet';
 import { InProgress } from 'grommet-icons';
 import { Game, Player, Team } from './types/Types';
@@ -13,14 +13,26 @@ const GamePage: FC<{
     game?: Game;
     joinFirstTeam: JoinType;
     joinSecondTeam: JoinType;
+    setPlayerReady: () => void
 }> = ({
     player,
     game,
     joinFirstTeam,
     joinSecondTeam,
-    // leaveFirstTeam,
-    // leaveSecondTeam
+    setPlayerReady
 }) => {
+
+    const [isPlayerInTeam, setIsPlayerInTeam] = useState(false);
+
+    useEffect(() => {
+        if(game?.teamOne?.playerOne?.name === player?.name
+            || game?.teamOne?.playerTwo?.name === player?.name
+            || game?.teamTwo?.playerOne?.name === player?.name
+            || game?.teamTwo?.playerTwo?.name === player?.name) {
+                setIsPlayerInTeam(true);
+            }
+    }, [game])
+
     return (
         <Box
             justify="center"
@@ -42,7 +54,6 @@ const GamePage: FC<{
                             team={game.teamOne}
                             teamColor={GREEN}
                             joinTeam={joinFirstTeam}
-                            leaveTeam={leaveFirstTeam}
                         />
 
                         <Box>
@@ -54,10 +65,12 @@ const GamePage: FC<{
                             team={game.teamTwo}
                             teamColor={RED}
                             joinTeam={joinSecondTeam}
-                            leaveTeam={leaveSecondTeam}
                         />
                     </Box>
-                    <Button label="Gotowy" />
+                    <Button 
+                        disabled={isPlayerInTeam}
+                        label="Gotowy" 
+                        onClick={() => setPlayerReady()}/>
                 </>
             ) : (
                 <Box pad="xlarge" align="center" gap="large">
@@ -74,22 +87,19 @@ const TeamBox: FC<{
     team?: Team;
     teamColor: string;
     joinTeam: JoinType;
-    leaveTeam: LeaveType;
-}> = ({ player, team, teamColor, joinTeam, leaveTeam }) => {
+}> = ({ player, team, teamColor, joinTeam }) => {
     const isCurrentPlayer = (currentPlayer: Player, player?: Player) =>
         player?.name === currentPlayer.name;
 
     return (
         <Box direction="row">
             <PlayerBox
-                leaveTeam={leaveTeam}
                 currentPlayer={isCurrentPlayer(player, team?.playerOne)}
                 player={team?.playerOne}
                 teamColor={teamColor}
                 joinTeam={() => joinTeam('first')}
             />
             <PlayerBox
-                leaveTeam={leaveTeam}
                 currentPlayer={isCurrentPlayer(player, team?.playerTwo)}
                 player={team?.playerTwo}
                 teamColor={teamColor}
@@ -104,23 +114,20 @@ const PlayerBox: FC<{
     player?: Player;
     teamColor?: string;
     joinTeam?: () => void;
-    leaveTeam?: () => void;
-}> = ({ currentPlayer = false, player, teamColor, joinTeam, leaveTeam }) => {
+}> = ({ currentPlayer = false, player, teamColor, joinTeam }) => {
     return (
         <Box
             onClick={() => {
-                if (currentPlayer && leaveTeam) {
-                    leaveTeam();
-                } else if (player && joinTeam) {
-                    joinTeam();
-                }
-            }}
+            if(currentPlayer && player && joinTeam) {
+                joinTeam();
+            }}}
             round
             height={'150px'}
             pad="medium"
             margin={'15px'}
             width={'100%'}
             align="center"
+            background={{color: player?.isReady ? GREEN : 'none'}}
             border={{
                 color: player ? teamColor : 'status-unknown',
                 size: '2px',
@@ -128,9 +135,12 @@ const PlayerBox: FC<{
             }}
         >
             {player && (
-                <Text margin="auto" size="xlarge">
+                <><Text margin="auto" size="xlarge">
                     {player.name}
                 </Text>
+                <Text margin="auto" size="large">
+                    {currentPlayer ? '(Ty)' : ''}
+                </Text></>
             )}
         </Box>
     );
